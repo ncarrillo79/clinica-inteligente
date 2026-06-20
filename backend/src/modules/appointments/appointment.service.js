@@ -3,13 +3,18 @@ const { ApiError } = require('../../utils/api-error')
 const { getWeatherForecast } = require('../weather/weather.service')
 
 async function createAppointment(data, userId) {
-  const existing = await Appointment.findOne({
-    doctorName: data.doctorName,
+  const conflictQuery = {
     appointmentDate: data.appointmentDate,
     appointmentTime: data.appointmentTime,
     status: 'SCHEDULED'
-  })
+  }
+  if (data.doctorId) {
+    conflictQuery.doctorId = data.doctorId
+  } else {
+    conflictQuery.doctorName = data.doctorName
+  }
 
+  const existing = await Appointment.findOne(conflictQuery)
   if (existing) {
     throw new ApiError(400, 'Horário já está ocupado')
   }
@@ -46,6 +51,7 @@ async function createAppointment(data, userId) {
 
   const appointment = await Appointment.create({
     patientId: userId,
+    doctorId: data.doctorId || null,
     doctorName: data.doctorName,
     specialty: data.specialty,
     appointmentDate: data.appointmentDate,

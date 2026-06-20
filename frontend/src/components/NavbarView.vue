@@ -1,40 +1,29 @@
 <template>
   <header class="navbar">
-    <div class="navbar-shell">
-      <div class="brand" @click="goAppointments">
-        <div class="brand-icon">🏥</div>
-        <div class="brand-text">
-          <strong>Clínica Inteligente</strong>
-          <span>Agendamentos e clima</span>
-        </div>
+    <div class="inner">
+      <div class="brand" @click="$router.push('/appointments')">
+        <div class="cross"><span></span><span></span></div>
+        <strong>Clínica Inteligente</strong>
       </div>
 
-      <nav class="nav-links">
-        <RouterLink to="/appointments" class="nav-link">Consultas</RouterLink>
-        <RouterLink to="/my-appointments" class="nav-link">Minhas Consultas</RouterLink>
+      <nav>
+        <RouterLink to="/appointments" class="link">Consultas</RouterLink>
+        <RouterLink to="/profile" class="link">Perfil</RouterLink>
       </nav>
 
-      <div class="nav-actions">
-        <button class="btn btn-secondary" @click="goAppointments">
-          Ir para agenda
-        </button>
-        <button class="btn btn-danger" @click="logout">
-          Voltar para login
-        </button>
-      </div>
+      <button class="logout" @click="logout">Sair</button>
     </div>
   </header>
 </template>
 
 <script>
+import { useAuthStore } from '../stores/auth.store'
+
 export default {
   name: 'NavbarView',
   methods: {
-    goAppointments() {
-      this.$router.push('/appointments')
-    },
     logout() {
-      localStorage.removeItem('token')
+      useAuthStore().logout()
       this.$router.push('/login')
     }
   }
@@ -45,147 +34,87 @@ export default {
 .navbar {
   position: sticky;
   top: 0;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+  z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.navbar-shell {
-  max-width: 1180px;
+.inner {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 14px 18px;
+  padding: 0 32px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 24px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
-  min-width: 220px;
 }
 
-.brand-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #2563eb, #38bdf8);
-  color: white;
-  font-size: 20px;
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.brand-text strong {
-  font-size: 15px;
-  color: #0f172a;
-}
-
-.brand-text span {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 4px;
-}
-
-.nav-links {
+.cross {
+  width: 30px;
+  height: 30px;
+  background: #0d9488;
+  border-radius: 7px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
-.nav-link {
-  text-decoration: none;
-  color: #334155;
+.cross span {
+  position: absolute;
+  background: white;
+  border-radius: 2px;
+}
+
+.cross span:first-child { width: 13px; height: 2.5px; }
+.cross span:last-child { width: 2.5px; height: 13px; }
+
+.brand strong {
+  font-size: 14px;
   font-weight: 700;
-  font-size: 14px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  transition: 0.2s ease;
-}
-
-.nav-link:hover {
-  background: #eff6ff;
-  color: #1d4ed8;
-}
-
-.nav-link.router-link-active {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.nav-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  min-width: 220px;
-}
-
-.btn {
-  height: 40px;
-  border: none;
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.btn-secondary {
-  background: #e2e8f0;
   color: #0f172a;
 }
 
-.btn-secondary:hover {
-  background: #cbd5e1;
+nav {
+  display: flex;
+  gap: 4px;
 }
 
-.btn-danger {
-  background: #ef4444;
-  color: white;
+.link {
+  text-decoration: none;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
 }
 
-.btn-danger:hover {
-  background: #dc2626;
+.link:hover { color: #0f172a; background: #f8fafc; }
+.link.router-link-active { color: #0d9488; background: #f0fdfa; font-weight: 600; }
+
+.logout {
+  background: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
-@media (max-width: 960px) {
-  .navbar-shell {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .brand,
-  .nav-actions {
-    min-width: 100%;
-  }
-
-  .nav-links {
-    justify-content: flex-start;
-  }
-
-  .nav-actions {
-    justify-content: stretch;
-  }
-
-  .btn {
-    width: 100%;
-  }
-}
+.logout:hover { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
 </style>

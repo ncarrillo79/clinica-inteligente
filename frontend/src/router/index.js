@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
 import AppointmentView from '../views/AppointmentView.vue'
+import ProfileView from '../views/ProfileView.vue'
 
 const routes = [
   {
@@ -11,28 +13,25 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginView,
-    meta: {
-      showNavbar: false,
-      requiresAuth: false
-    }
+    meta: { showNavbar: false, requiresAuth: false }
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: RegisterView,
+    meta: { showNavbar: false, requiresAuth: false }
   },
   {
     path: '/appointments',
     name: 'appointments',
     component: AppointmentView,
-    meta: {
-      showNavbar: true,
-      requiresAuth: true
-    }
+    meta: { showNavbar: true, requiresAuth: true }
   },
   {
-    path: '/my-appointments',
-    name: 'myAppointments',
-    component: AppointmentView,
-    meta: {
-      showNavbar: true,
-      requiresAuth: true
-    }
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
+    meta: { showNavbar: true, requiresAuth: true }
   }
 ]
 
@@ -48,7 +47,7 @@ router.beforeEach((to) => {
     return { name: 'login' }
   }
 
-  if (to.name === 'login' && token) {
+  if ((to.name === 'login' || to.name === 'register') && token) {
     return { name: 'appointments' }
   }
 })

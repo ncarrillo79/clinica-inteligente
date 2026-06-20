@@ -3,7 +3,8 @@
     "module": "CommonJS",
     "target": "ES2022",
     "checkJs": false,
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "dist"]
 }
