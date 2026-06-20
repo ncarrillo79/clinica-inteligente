@@ -1,6 +1,7 @@
 const { Appointment } = require('./appointment.model')
 const { ApiError } = require('../../utils/api-error')
 const { getWeatherForecast } = require('../weather/weather.service')
+const { computeNoShowRisk } = require('../prediction/prediction.service')
 
 async function createAppointment(data, userId) {
   const conflictQuery = {
@@ -67,6 +68,15 @@ async function createAppointment(data, userId) {
     }
   }
 
+  const { noShowRisk, riskLevel } = computeNoShowRisk({
+    patientPriorNoShows,
+    patientTotalAppointments,
+    leadTimeDays,
+    weatherRainProbability,
+    dayOfWeek,
+    appointmentHour
+  })
+
   const appointment = await Appointment.create({
     patientId: userId,
     doctorId: data.doctorId || null,
@@ -81,7 +91,9 @@ async function createAppointment(data, userId) {
     leadTimeDays,
     weatherRainProbability,
     patientPriorNoShows,
-    patientTotalAppointments
+    patientTotalAppointments,
+    noShowRisk,
+    riskLevel
   })
 
   return appointment
