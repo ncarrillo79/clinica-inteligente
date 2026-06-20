@@ -30,7 +30,7 @@ const AppointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['SCHEDULED', 'CANCELLED'],
+      enum: ['SCHEDULED', 'CANCELLED', 'ATTENDED', 'NO_SHOW'],
       default: 'SCHEDULED'
     },
     notes: {
@@ -42,7 +42,26 @@ const AppointmentSchema = new mongoose.Schema(
       description: String,
       temperature: Number,
       alert: String
-    }
+    },
+
+    // --- ML no-show feature fields ---
+    outcomeRecordedAt: { type: Date, default: null },
+
+    // Temporal features (derived from appointmentDate/Time at creation)
+    dayOfWeek: { type: Number, min: 0, max: 6, default: null },
+    appointmentHour: { type: Number, min: 0, max: 23, default: null },
+    leadTimeDays: { type: Number, default: null },
+
+    // Weather feature (raw pop from OpenWeather)
+    weatherRainProbability: { type: Number, min: 0, max: 1, default: null },
+
+    // Patient history features (snapshot at creation time)
+    patientPriorNoShows: { type: Number, default: 0 },
+    patientTotalAppointments: { type: Number, default: 0 },
+
+    // Risk score (filled later by prediction pipeline)
+    noShowRisk: { type: Number, default: null },
+    riskLevel: { type: String, enum: ['LOW', 'MEDIUM', 'HIGH', null], default: null }
   },
   { timestamps: true }
 )

@@ -1,7 +1,8 @@
 const {
   createAppointment,
   getMyAppointments,
-  cancelAppointment
+  cancelAppointment,
+  recordOutcome
 } = require('./appointment.service')
 
 async function createAppointmentController(req, res) {
@@ -33,8 +34,19 @@ async function cancelAppointmentController(req, res) {
   })
 }
 
+async function recordOutcomeController(req, res) {
+  const appointment = await recordOutcome(req.params.id, req.body.outcome)
+
+  return res.status(200).json({
+    success: true,
+    message: `Desfecho registrado: ${req.body.outcome}`,
+    data: appointment
+  })
+}
+
 module.exports = {
   createAppointmentController,
   getMyAppointmentsController,
-  cancelAppointmentController
+  cancelAppointmentController,
+  recordOutcomeController
 }

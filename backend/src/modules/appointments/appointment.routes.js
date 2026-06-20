@@ -4,13 +4,14 @@ const router = Router()
 const {
   createAppointmentController,
   getMyAppointmentsController,
-  cancelAppointmentController
+  cancelAppointmentController,
+  recordOutcomeController
 } = require('./appointment.controller')
 
 const { authMiddleware } = require('../../middlewares/auth.middleware')
 const { validateRequest } = require('../../middlewares/validate.middleware')
 const { asyncHandler } = require('../../utils/async-handler')
-const { createAppointmentValidation } = require('./appointment.validation')
+const { createAppointmentValidation, recordOutcomeValidation } = require('./appointment.validation')
 
 /**
  * @openapi
@@ -96,6 +97,48 @@ router.patch(
   '/:id/cancel',
   authMiddleware,
   asyncHandler(cancelAppointmentController)
+)
+
+/**
+ * @openapi
+ * /appointments/{id}/outcome:
+ *   patch:
+ *     tags: [Appointments]
+ *     summary: Registrar desfecho da consulta (ATTENDED ou NO_SHOW)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [outcome]
+ *             properties:
+ *               outcome:
+ *                 type: string
+ *                 enum: [ATTENDED, NO_SHOW]
+ *     responses:
+ *       200:
+ *         description: Desfecho registrado com sucesso
+ *       400:
+ *         description: Consulta já tem desfecho ou está cancelada
+ *       401:
+ *         description: Não autenticado
+ *       404:
+ *         description: Consulta não encontrada
+ */
+router.patch(
+  '/:id/outcome',
+  authMiddleware,
+  recordOutcomeValidation,
+  validateRequest,
+  asyncHandler(recordOutcomeController)
 )
 
 module.exports = router

@@ -41,4 +41,12 @@ const createAppointmentValidation = [
   body('notes').optional().trim()
 ]
 
-module.exports = { createAppointmentValidation }
+const recordOutcomeValidation = [
+  body('outcome')
+    .notEmpty()
+    .withMessage('outcome é obrigatório')
+    .isIn(['ATTENDED', 'NO_SHOW'])
+    .withMessage('outcome deve ser ATTENDED ou NO_SHOW')
+]
+
+module.exports = { createAppointmentValidation, recordOutcomeValidation }

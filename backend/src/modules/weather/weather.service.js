@@ -38,7 +38,8 @@ async function getWeatherForecast(city, date) {
     return {
       temperature: target.main.temp,
       description: target.weather[0].description,
-      willRain: target.pop > 0.4
+      willRain: target.pop > 0.4,
+      rainProbability: target.pop ?? 0
     }
   } catch (error) {
     throw new ApiError(500, 'Erro ao consultar clima')
