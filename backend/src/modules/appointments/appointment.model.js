@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+﻿const mongoose = require('mongoose')
 
 const AppointmentSchema = new mongoose.Schema(
   {
@@ -61,7 +61,7 @@ const AppointmentSchema = new mongoose.Schema(
 
     // Risk score (filled later by prediction pipeline)
     noShowRisk: { type: Number, default: null },
-    riskLevel: { type: String, enum: ['LOW', 'MEDIUM', 'HIGH', null], default: null }
+    riskLevel: { type: String, enum: ['LOW', 'MEDIUM', 'HIGH'], default: null }
   },
   { timestamps: true }
 )
