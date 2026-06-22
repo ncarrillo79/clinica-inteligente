@@ -2,7 +2,7 @@ const request = require('supertest')
 const mongoose = require('mongoose')
 const { app } = require('../app')
 
-const TEST_DB = 'mongodb://127.0.0.1:27017/clinica-test'
+const TEST_DB = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/clinica-test'
 
 beforeAll(async () => {
   await mongoose.connect(TEST_DB)

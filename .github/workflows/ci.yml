@@ -11,23 +11,19 @@ jobs:
     name: Backend — lint & test
     runs-on: ubuntu-latest
 
-    services:
-      mongo:
-        image: mongo:7
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --eval \"db.adminCommand('ping')\""
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     defaults:
       run:
         working-directory: backend
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Start MongoDB replica set
+        run: |
+          docker run -d --name mongo -p 27017:27017 mongo:7 mongod --replSet rs0 --bind_ip_all
+          until docker exec mongo mongosh --quiet --eval "db.adminCommand('ping').ok" 2>/dev/null | grep -q 1; do sleep 1; done
+          docker exec mongo mongosh --quiet --eval "rs.initiate({_id:'rs0',members:[{_id:0,host:'127.0.0.1:27017'}]})"
+          until docker exec mongo mongosh --quiet --eval "rs.status().myState" 2>/dev/null | grep -q 1; do sleep 1; done
 
       - uses: actions/setup-node@v4
         with:
@@ -45,7 +41,7 @@ jobs:
         run: npm test
         env:
           NODE_ENV: test
-          MONGODB_URI: mongodb://localhost:27017/clinica-test
+          MONGODB_URI: mongodb://127.0.0.1:27017/clinica-test?replicaSet=rs0
           JWT_SECRET: ci-secret-not-for-production
           JWT_EXPIRES_IN: 1h
           OPENWEATHER_API_KEY: mock-key
