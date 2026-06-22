@@ -17,10 +17,20 @@ function generateSlots(startTime, endTime, slotMinutes = 30) {
   return slots
 }
 
-async function listDoctors({ specialty, active = true } = {}) {
+async function listDoctors({ specialty, active = true, page = 1, limit = 20 } = {}) {
   const filter = { active }
   if (specialty) filter.specialty = new RegExp(specialty, 'i')
-  return Doctor.find(filter).sort({ name: 1 })
+
+  const skip = (page - 1) * limit
+  const [doctors, total] = await Promise.all([
+    Doctor.find(filter).sort({ name: 1 }).skip(skip).limit(limit),
+    Doctor.countDocuments(filter)
+  ])
+
+  return {
+    data: doctors,
+    pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+  }
 }
 
 async function getDoctorById(id) {

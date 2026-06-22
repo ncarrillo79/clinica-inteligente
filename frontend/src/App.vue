@@ -6,15 +6,17 @@
         <component :is="Component" />
       </transition>
     </router-view>
+    <AppToast />
   </div>
 </template>
 
 <script>
 import NavbarView from './components/NavbarView.vue'
+import AppToast from './components/AppToast.vue'
 
 export default {
   name: 'App',
-  components: { NavbarView }
+  components: { NavbarView, AppToast }
 }
 </script>
 

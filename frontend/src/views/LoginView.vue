@@ -44,12 +44,27 @@
         <div v-if="errorMsg" class="error">{{ errorMsg }}</div>
 
         <label>Email</label>
-        <input v-model="email" type="email" placeholder="voce@email.com" @keyup.enter="login" />
+        <input
+          v-model="email"
+          type="email"
+          placeholder="voce@email.com"
+          :class="{ 'input-error': errors.email }"
+          @keyup.enter="login"
+        />
+        <span v-if="errors.email" class="field-err">{{ errors.email }}</span>
 
         <label>Senha</label>
-        <input v-model="password" type="password" placeholder="••••••••" @keyup.enter="login" />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="••••••••"
+          :class="{ 'input-error': errors.password }"
+          @keyup.enter="login"
+        />
+        <span v-if="errors.password" class="field-err">{{ errors.password }}</span>
 
         <button :disabled="loading" @click="login">
+          <span v-if="loading" class="spinner"></span>
           {{ loading ? 'Entrando...' : 'Entrar' }}
         </button>
 
@@ -70,12 +85,20 @@ import { useAuthStore } from '../stores/auth.store'
 export default {
   name: 'LoginView',
   data() {
-    return { email: '', password: '', errorMsg: '', loading: false }
+    return { email: '', password: '', errors: {}, errorMsg: '', loading: false }
   },
   methods: {
+    validate() {
+      const e = {}
+      if (!this.email.trim()) e.email = 'Email é obrigatório'
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) e.email = 'Email inválido'
+      if (!this.password) e.password = 'Senha é obrigatória'
+      this.errors = e
+      return Object.keys(e).length === 0
+    },
     async login() {
       this.errorMsg = ''
-      if (!this.email || !this.password) { this.errorMsg = 'Preencha email e senha.'; return }
+      if (!this.validate()) return
       this.loading = true
       try {
         await useAuthStore().login(this.email, this.password)
@@ -251,7 +274,25 @@ input:focus {
   background: #fff;
 }
 
+input.input-error {
+  border-color: #dc2626;
+  background: #fff8f8;
+}
+
+input.input-error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+}
+
 input::placeholder { color: #9ca3af; }
+
+.field-err {
+  display: block;
+  font-size: 12px;
+  color: #dc2626;
+  margin-top: -14px;
+  margin-bottom: 14px;
+}
 
 button {
   display: block;
@@ -272,6 +313,20 @@ button {
 
 button:hover:not(:disabled) { background: #0f766e; transform: translateY(-1px); }
 button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+button { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .link-text {
   text-align: center;

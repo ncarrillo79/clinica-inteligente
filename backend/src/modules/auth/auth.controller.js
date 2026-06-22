@@ -1,4 +1,4 @@
-const { register, login } = require('./auth.service');
+const { register, login, requestPasswordReset, confirmPasswordReset } = require('./auth.service');
 const { sanitizeUser } = require('../../utils/sanitize-user');
 
 async function registerController(req, res) {
@@ -28,4 +28,20 @@ async function meController(req, res) {
   });
 }
 
-module.exports = { registerController, loginController, meController };
+async function forgotPasswordController(req, res) {
+  const result = await requestPasswordReset(req.body.email)
+  return res.status(200).json({ success: true, ...result })
+}
+
+async function resetPasswordController(req, res) {
+  const result = await confirmPasswordReset(req.body.token, req.body.password)
+  return res.status(200).json({ success: true, ...result })
+}
+
+module.exports = {
+  registerController,
+  loginController,
+  meController,
+  forgotPasswordController,
+  resetPasswordController
+};

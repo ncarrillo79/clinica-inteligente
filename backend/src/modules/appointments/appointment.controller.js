@@ -16,12 +16,13 @@ async function createAppointmentController(req, res) {
 }
 
 async function getMyAppointmentsController(req, res) {
-  const appointments = await getMyAppointments(req.user._id)
-
-  return res.status(200).json({
-    success: true,
-    data: appointments
+  const { page, limit } = req.query
+  const result = await getMyAppointments(req.user._id, {
+    page: page ? Math.max(1, parseInt(page, 10)) : 1,
+    limit: limit ? Math.min(50, parseInt(limit, 10)) : 10
   })
+
+  return res.status(200).json({ success: true, ...result })
 }
 
 async function cancelAppointmentController(req, res) {

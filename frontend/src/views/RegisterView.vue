@@ -24,26 +24,26 @@
         <div v-if="errorMsg" class="error">{{ errorMsg }}</div>
 
         <label>Nome completo</label>
-        <input v-model="form.name" type="text" placeholder="Seu nome" />
+        <input v-model="form.name" type="text" placeholder="Seu nome" :class="{ 'input-error': errors.name }" />
         <span v-if="errors.name" class="field-err">{{ errors.name }}</span>
 
         <label>Email</label>
-        <input v-model="form.email" type="email" placeholder="voce@email.com" />
+        <input v-model="form.email" type="email" placeholder="voce@email.com" :class="{ 'input-error': errors.email }" />
         <span v-if="errors.email" class="field-err">{{ errors.email }}</span>
 
         <label>Senha</label>
-        <input v-model="form.password" type="password" placeholder="Mínimo 6 caracteres" />
+        <input v-model="form.password" type="password" placeholder="Mínimo 6 caracteres" :class="{ 'input-error': errors.password }" />
         <span v-if="errors.password" class="field-err">{{ errors.password }}</span>
 
         <div class="row">
           <div>
             <label>CPF</label>
-            <input v-model="form.cpf" type="text" placeholder="000.000.000-00" maxlength="14" @input="maskCpf" />
+            <input v-model="form.cpf" type="text" placeholder="000.000.000-00" maxlength="14" :class="{ 'input-error': errors.cpf }" @input="maskCpf" />
             <span v-if="errors.cpf" class="field-err">{{ errors.cpf }}</span>
           </div>
           <div>
             <label>Telefone</label>
-            <input v-model="form.phone" type="text" placeholder="(00) 00000-0000" maxlength="15" @input="maskPhone" />
+            <input v-model="form.phone" type="text" placeholder="(00) 00000-0000" maxlength="15" :class="{ 'input-error': errors.phone }" @input="maskPhone" />
             <span v-if="errors.phone" class="field-err">{{ errors.phone }}</span>
           </div>
         </div>
@@ -257,6 +257,16 @@ input:focus {
   border-color: #0d9488;
   box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
   background: #fff;
+}
+
+input.input-error {
+  border-color: #dc2626;
+  background: #fff8f8;
+}
+
+input.input-error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
 }
 
 input::placeholder { color: #9ca3af; }

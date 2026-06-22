@@ -8,12 +8,14 @@ const {
 } = require('./doctor.service')
 
 async function listDoctorsController(req, res) {
-  const { specialty, active } = req.query
-  const doctors = await listDoctors({
+  const { specialty, active, page, limit } = req.query
+  const result = await listDoctors({
     specialty,
-    active: active === 'false' ? false : true
+    active: active === 'false' ? false : true,
+    page: page ? Math.max(1, parseInt(page, 10)) : 1,
+    limit: limit ? Math.min(100, parseInt(limit, 10)) : 20
   })
-  return res.status(200).json({ success: true, data: doctors })
+  return res.status(200).json({ success: true, ...result })
 }
 
 async function getDoctorController(req, res) {
