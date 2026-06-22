@@ -3,6 +3,8 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import AppointmentView from '../views/AppointmentView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import ForgotPasswordView from '../views/ForgotPasswordView.vue'
+import ResetPasswordView from '../views/ResetPasswordView.vue'
 
 const routes = [
   {
@@ -32,6 +34,18 @@ const routes = [
     name: 'profile',
     component: ProfileView,
     meta: { showNavbar: true, requiresAuth: true }
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPasswordView,
+    meta: { showNavbar: false, requiresAuth: false }
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPasswordView,
+    meta: { showNavbar: false, requiresAuth: false }
   }
 ]
 

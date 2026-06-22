@@ -63,6 +63,8 @@
         />
         <span v-if="errors.password" class="field-err">{{ errors.password }}</span>
 
+        <p class="link-text forgot"><router-link to="/forgot-password">Esqueci minha senha?</router-link></p>
+
         <button :disabled="loading" @click="login">
           <span v-if="loading" class="spinner"></span>
           {{ loading ? 'Entrando...' : 'Entrar' }}
@@ -336,6 +338,7 @@ button { display: flex; align-items: center; justify-content: center; gap: 8px; 
 
 .link-text a { color: #0d9488; font-weight: 600; text-decoration: none; }
 .link-text a:hover { text-decoration: underline; }
+.link-text.forgot { text-align: right; margin-top: -14px; margin-bottom: 20px; }
 
 .lgpd-badge {
   display: flex;

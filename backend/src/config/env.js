@@ -10,5 +10,10 @@ module.exports = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
   openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
   openWeatherBaseUrl: process.env.OPENWEATHER_BASE_URL,
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173'
+  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+  emailHost: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  emailPort: parseInt(process.env.EMAIL_PORT || '587'),
+  emailUser: process.env.EMAIL_USER,
+  emailPass: process.env.EMAIL_PASS,
+  emailFrom: process.env.EMAIL_FROM || process.env.EMAIL_USER
 };

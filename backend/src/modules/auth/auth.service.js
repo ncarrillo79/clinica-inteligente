@@ -6,6 +6,8 @@ const { ApiError } = require('../../utils/api-error');
 const { signToken } = require('../../utils/jwt');
 const { sanitizeUser } = require('../../utils/sanitize-user');
 const { logger } = require('../../config/logger')
+const { sendMail } = require('../../config/mailer')
+const env = require('../../config/env')
 
 async function register(data) {
   const existingEmail = await User.findOne({ email: data.email });
@@ -65,10 +67,32 @@ async function requestPasswordReset(email) {
     expiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
   })
 
-  // In production send email here. In development log the token.
-  logger.info('Password reset token (dev only)', { email, token: rawToken })
+  const resetUrl = `${env.frontendUrl}/reset-password?token=${rawToken}`
 
-  return { message: 'Se o email existir, você receberá as instruções.', _devToken: rawToken }
+  await sendMail({
+    to: user.email,
+    subject: 'Recuperação de senha — Clínica Inteligente',
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
+        <h2 style="color:#0d9488">Clínica Inteligente</h2>
+        <p>Olá, <strong>${user.name}</strong>.</p>
+        <p>Recebemos uma solicitação para redefinir a senha da sua conta.</p>
+        <p>Clique no botão abaixo para criar uma nova senha. O link expira em <strong>15 minutos</strong>.</p>
+        <a href="${resetUrl}"
+           style="display:inline-block;padding:12px 24px;background:#0d9488;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold">
+          Redefinir senha
+        </a>
+        <p style="margin-top:24px;color:#6b7280;font-size:13px">
+          Se você não solicitou isso, ignore este email. Sua senha não será alterada.
+        </p>
+        <p style="color:#6b7280;font-size:13px">Link: ${resetUrl}</p>
+      </div>
+    `
+  })
+
+  logger.info('Password reset email sent', { email: user.email })
+
+  return { message: 'Se o email existir, você receberá as instruções.' }
 }
 
 async function confirmPasswordReset(token, newPassword) {
